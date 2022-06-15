@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createServer } from "miragejs"
+import { createServer, Model } from "miragejs"
 import { App } from './App';
 
 const root = ReactDOM.createRoot(
@@ -8,17 +8,20 @@ const root = ReactDOM.createRoot(
 );
 
 createServer({
+  models: {
+    transaction: Model,
+  },
+
   routes() {
     this.namespace = "api";
 
     this.get("/transactions", () => {
-      return [
-      {
-        id: 1,
-        title:"tresmil",
-        amount: 400,
-      }
-    ]
+      return this.schema.all("transaction")
+    })
+
+    this.post("/transactions", (schema: any, request: any) => {
+      const data = JSON.parse(request.requestBody)
+      return schema.create("transaction", data)
     })
   }
 
